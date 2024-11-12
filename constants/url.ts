@@ -1,1 +1,1 @@
-export const API_URL = 'http://35.154.133.23';
+export const API_URL = 'https://crossplay.shop';

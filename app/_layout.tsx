@@ -45,8 +45,8 @@ export default function RootLayout() {
   if (ShowSplash) {
     return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Welcome to Crossplay</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#011C37' }}>
+          <Text style={{ color: '#05ECE6', fontSize: 26, fontWeight: '600' }}>Welcome to Crossplay</Text>
         </View>
       </ThemeProvider>
     )

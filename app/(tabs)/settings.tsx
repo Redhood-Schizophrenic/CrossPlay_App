@@ -1,6 +1,6 @@
 import { API_URL } from '@/constants/url';
 import { useState } from 'react';
-import { Alert, Button, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Modal, Text, TextInput, View } from 'react-native';
 
 export default function SettingsScreen() {
 
@@ -19,32 +19,32 @@ export default function SettingsScreen() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              "category_id": '536f2a77-d1e7-4ae5-a751-0e63e3ef0671',
+              "category_id": 'c495dcc9-6af5-4319-b39d-6cd6dafa49bf',
               "device_name": devicename
             }),
           });
 
           if (res.ok) {
             const data = await res.json();
+            console.log(data)
             Alert.alert('PlayStation Added');
           } else {
-            Alert.alert(`${await res.json()}`)
+            Alert.alert(`Error occured while adding Playstation`)
           }
         } else if (type === 'PC') {
           const res = await fetch(`${API_URL}/api/devices/add`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              "category_id": '18746ab5-0300-42d4-9d1b-38d3f7604989',
+              "category_id": '63f7bbff-ad1a-4a48-bdb3-6a93ec5eb9e1',
               "device_name": devicename
             }),
           });
 
           if (res.ok) {
-            const data = await res.json();
             Alert.alert('Gaming PC Added');
           } else {
-            Alert.alert(`${await res.json()}`)
+            Alert.alert(`Error Occured while adding PC`)
           }
         }
       }
@@ -87,6 +87,3 @@ export default function SettingsScreen() {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-// });

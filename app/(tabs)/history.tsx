@@ -115,6 +115,13 @@ export default function SessionsHistory() {
                 </View>
               </View>
 
+              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <View style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Text style={{ fontWeight: 700, fontSize: 23, textAlign: 'right' }}>{items.Device.DeviceName}</Text>
+                </View>
+              </View>
+
+
             </View>
           ))
         }

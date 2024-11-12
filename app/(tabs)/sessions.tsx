@@ -25,8 +25,9 @@ export default function SessionsScreen() {
     hour12: true,
   });
 
-  const handleOutTimeChange = (event: any, selectedTime?: Date) => {
-    const currentTime = selectedTime || outTime;
+  const handleOutTimeChange = (event: any, selectedTime: Date) => {
+
+    const currentTime = selectedTime;
     setShowOutTimePicker(Platform.OS === 'ios');
     setOutTime(currentTime);
   };
@@ -242,6 +243,12 @@ export default function SessionsScreen() {
                       Water
                     </Text>
                     <Text style={{ fontWeight: 700, fontSize: 19, textAlign: 'right' }}>{items.WaterBottles}</Text>
+                  </View>
+                </View>
+
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                  <View style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Text style={{ fontWeight: 700, fontSize: 23, textAlign: 'right' }}>{items.Device.DeviceName}</Text>
                   </View>
                 </View>
 
