@@ -1,10 +1,185 @@
-import { View, Text, Alert, ScrollView, TouchableOpacity, RefreshControl, Modal, Button, Platform } from 'react-native'
+import { View, Text, Alert, ScrollView, TouchableOpacity, RefreshControl, Modal, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FontAwesome5 } from '@expo/vector-icons';
 import QuantitySelector from '@/components/QuantitySelector';
 import { API_URL } from '@/constants/url';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  headerText: {
+    fontSize: 28,
+    color: '#05ECE6',
+    fontWeight: '700',
+  },
+  subHeaderText: {
+    fontSize: 16,
+    color: '#ffffff',
+    opacity: 0.8,
+    marginTop: 5,
+  },
+  sessionCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    margin: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  deviceInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  deviceIcon: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#011C37',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  deviceName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#011C37',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f3f5',
+  },
+  label: {
+    fontSize: 14,
+    color: '#6c757d',
+  },
+  value: {
+    fontSize: 14,
+    color: '#011C37',
+    fontWeight: '500',
+  },
+  actionButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    gap: 10,
+  },
+  actionButton: {
+    backgroundColor: '#011C37',
+    borderRadius: 12,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  actionButtonSmall: {
+    flex: 1,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  actionButtonText: {
+    color: '#05ECE6',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    minHeight: '40%',
+    paddingBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#011C37',
+  },
+  modalContent: {
+    padding: 20,
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#011C37',
+    marginBottom: 8,
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f8f9fa',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeButtonText: {
+    color: '#011C37',
+    fontSize: 20,
+    fontWeight: '600',
+    marginTop: -2,
+  },
+  pickerContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+    marginBottom: 15,
+  },
+  picker: {
+    height: 50,
+  },
+  itemSection: {
+    marginBottom: 20,
+  },
+  timeButton: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  timeText: {
+    fontSize: 16,
+    color: '#011C37',
+  },
+});
 
 export default function SessionsScreen() {
 
@@ -14,23 +189,8 @@ export default function SessionsScreen() {
   const [isSnacksModalOpen, setisSnacksModalOpen] = useState(false);
   const [session_id, setsession_id] = useState('');
   const [minutes, setminutes] = useState('');
-  const [outTime, setOutTime] = useState(new Date());
-  const [showOutTimePicker, setShowOutTimePicker] = useState(false);
   const [Snacks, setSnacks] = useState(0);
   const [WaterBottle, setWaterBottle] = useState(0);
-
-  const out_time: string = outTime.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
-
-  const handleOutTimeChange = (event: any, selectedTime: Date) => {
-
-    const currentTime = selectedTime;
-    setShowOutTimePicker(Platform.OS === 'ios');
-    setOutTime(currentTime);
-  };
 
   async function handleFetchSessions() {
     setRefreshing(true)
@@ -91,7 +251,6 @@ export default function SessionsScreen() {
           body: JSON.stringify({
             "session_id": session_id,
             "minutes": parseFloat(minutes),
-            "out_time": out_time
           })
         });
 
@@ -134,211 +293,179 @@ export default function SessionsScreen() {
   }, [])
 
   return (
-    <>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#011C37', '#013366']}
+        style={styles.header}
+      >
+        <Text style={styles.headerText}>Active Sessions</Text>
+        <Text style={styles.subHeaderText}>Currently running gaming sessions</Text>
+      </LinearGradient>
+
       <ScrollView
-        contentContainerStyle={{ padding: 15, }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleFetchSessions} />
         }
       >
-        <View style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
-          {
-            Sessions?.map((items: any, index: any) => (
-              <View
-                key={index}
-                style={{ backgroundColor: '#fff', elevation: 8, padding: 15, borderRadius: 10, display: 'flex', flexDirection: "column", gap: 10 }}
-              >
-                <View style={{ width: "100%" }}>
-                  <TouchableOpacity
-                    style={{
-                      width: "100%",
-                      alignItems: 'center',
-                      paddingHorizontal: 10,
-                      paddingVertical: 5,
-                      borderRadius: 10,
-                      backgroundColor: items.Status === 'Open' ? '#A7F3D0' :
-                        (items.Status === 'Extended' ? '#FDE68A' :
-                          (items.Status === 'Close' ? '#FECACA' : 'black')),
-                    }}>
-                    <Text
-                      style={{
-                        fontWeight: 'bold', fontSize: 19,
-                        color: items.Status === 'Open' ? '#10B981' :
-                          (items.Status === 'Extended' ? '#F59E0B' :
-                            (items.Status === 'Close' ? '#EF4444' : 'black')),
-                      }}
-                    >
-                      {items.Status}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                <View
-                  style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}
-                >
-                  <TouchableOpacity
-                    style={{ width: "auto", alignItems: 'center', backgroundColor: '#F59E0B', paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10 }}
-                    onPress={() => {
-                      setisSnacksModalOpen(true); setsession_id(items.id);
-                      setSnacks(items.Snacks); setWaterBottle(items.WaterBottles)
-                    }}
-                  >
-                    <FontAwesome name='glass' style={{ color: '#fff', fontWeight: 100, fontSize: 18 }} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{ width: "auto", alignItems: 'center', backgroundColor: '#60A5FA', paddingVertical: 10, paddingHorizontal: 12, borderRadius: 10 }}
-                    onPress={() => { setisModalOpen(true); setsession_id(items.id); }}
-                  >
-                    <FontAwesome name='plus' style={{ color: '#fff', fontWeight: 100, fontSize: 20 }} />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{ width: "auto", alignItems: 'center', backgroundColor: '#10B981', padding: 10, borderRadius: 10 }}
-                    onPress={() => { handleSessionClosed(items.id) }}
-                  >
-                    <FontAwesome name='check' style={{ color: '#fff', fontWeight: 100, fontSize: 20 }} />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, fontWeight: 400 }}>Date</Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>{items.Date}</Text>
-                  </View>
-                </View>
-
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, fontWeight: 400 }}>Customer</Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>{items.CustomerName}</Text>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, textAlign: 'right', fontWeight: 400 }}>
-                      Price
-                    </Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>Rs.{items.SessionPrice}</Text>
-                  </View>
-                </View>
-
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, fontWeight: 400 }}>In Time</Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>{items.InTime}</Text>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, textAlign: 'right', fontWeight: 400 }}>
-                      Out Time
-                    </Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>{items.OutTime}</Text>
-                  </View>
-                </View>
-
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, fontWeight: 400 }}>Snacks</Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19 }}>{items.Snacks}</Text>
-                  </View>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: "gray", fontSize: 17, textAlign: 'right', fontWeight: 400 }}>
-                      Water
-                    </Text>
-                    <Text style={{ fontWeight: 700, fontSize: 19, textAlign: 'right' }}>{items.WaterBottles}</Text>
-                  </View>
-                </View>
-
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                  <View style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ fontWeight: 700, fontSize: 23, textAlign: 'right' }}>{items.Device.DeviceName}</Text>
-                  </View>
-                </View>
-
+        {Sessions?.map((session: any, index: any) => (
+          <View key={index} style={styles.sessionCard}>
+            <View style={styles.deviceInfo}>
+              <View style={styles.deviceIcon}>
+                <FontAwesome5 
+                  name={session.Device.Category.CategoryName === "Playstation" ? "playstation" : "desktop"}
+                  size={20} 
+                  color="#05ECE6" 
+                />
               </View>
-            ))
-          }
-        </View>
+              <Text style={styles.label}>{session.Device.DeviceName}</Text>
+            </View>
+ 
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Customer</Text>
+              <Text style={styles.value}>{session.CustomerName}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Contact</Text>
+              <Text style={styles.value}>{session.CustomerContact}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Start Time</Text>
+              <Text style={styles.value}>{session.InTime}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Duration</Text>
+              <Text style={styles.value}>{session.Hours} hours</Text>
+            </View>
+
+            <View style={styles.actionButtonsRow}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.actionButtonSmall]}
+                onPress={() => {
+                  setsession_id(session.id);
+                  setSnacks(session.Snacks);
+                  setWaterBottle(session.WaterBottles);
+                  setisSnacksModalOpen(true);
+                }}
+              >
+                <FontAwesome5 name="coffee" size={16} color="#05ECE6" />
+                <Text style={styles.actionButtonText}>Add Items</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, styles.actionButtonSmall]}
+                onPress={() => {
+                  setsession_id(session.id);
+                  setisModalOpen(true);
+                }}
+              >
+                <FontAwesome5 name="clock" size={16} color="#05ECE6" />
+                <Text style={styles.actionButtonText}>Extend</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, styles.actionButtonSmall, { backgroundColor: '#dc3545' }]}
+                onPress={() => handleSessionClosed(session.id)}
+              >
+                <FontAwesome5 name="stop-circle" size={16} color="#ffffff" />
+                <Text style={[styles.actionButtonText, { color: '#ffffff' }]}>End</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
       </ScrollView>
 
-      <Modal
-        visible={isSnacksModalOpen}
-        animationType='slide'
-        onRequestClose={() => { setisSnacksModalOpen(false) }}
-      >
-        <ScrollView
-          contentContainerStyle={{ width: '100%', padding: 30, gap: 20 }}
-        >
-
-          <View style={{ paddingBottom: 10 }}>
-            <Text style={{ fontSize: 16, textTransform: 'uppercase', fontWeight: 500 }}>
-              Snacks
-            </Text>
-
-            <QuantitySelector
-              initialQuantity={Snacks}
-              onQuantityChange={(quantity) => setSnacks(quantity)}
-            />
-          </View>
-
-          <View style={{ paddingBottom: 10 }}>
-            <Text style={{ fontSize: 16, textTransform: 'uppercase', fontWeight: 500 }}>
-              Water
-            </Text>
-
-            <QuantitySelector
-              initialQuantity={WaterBottle}
-              onQuantityChange={(quantity) => setWaterBottle(quantity)}
-            />
-          </View>
-
-          <Button title='Edit' onPress={handleSessionSnacks} />
-        </ScrollView>
-      </Modal>
-
+      {/* Extend Session Modal */}
       <Modal
         visible={isModalOpen}
-        animationType='slide'
-        onRequestClose={() => { setisModalOpen(false) }}
+        animationType="slide"
+        transparent={true}
       >
-        <ScrollView
-          contentContainerStyle={{ width: '100%', padding: 30, gap: 20 }}
-        >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Extend Session</Text>
+              <TouchableOpacity
+                onPress={() => setisModalOpen(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>×</Text>
+              </TouchableOpacity>
+            </View>
 
-          <View style={{ paddingBottom: 10 }}>
-            <Text style={{ fontSize: 16, textTransform: 'uppercase', fontWeight: 500 }}>
-              Minutes
-            </Text>
-            <Picker
-              selectedValue={minutes}
-              onValueChange={(itemValue: any) => setminutes(itemValue)}
-              style={{ fontSize: 16, paddingVertical: 8, borderColor: 'gray', borderBottomWidth: 1 }}
-            >
-              <Picker.Item label="Select" value="" />
-              <Picker.Item label="15 min" value="15" />
-              <Picker.Item label="30 min" value="30" />
-              <Picker.Item label="1 Hour" value="60" />
-            </Picker>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalLabel}>Duration</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={minutes}
+                  onValueChange={(itemValue: any) => setminutes(itemValue)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Select duration" value="" />
+                  <Picker.Item label="15 minutes" value="15" />
+                  <Picker.Item label="30 minutes" value="30" />
+                  <Picker.Item label="1 hour" value="60" />
+                </Picker>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.actionButton, { marginTop: 20 }]}
+                onPress={handleSessionExtend}
+              >
+                <Text style={styles.actionButtonText}>Confirm Extension</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <View style={{ paddingBottom: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <Text style={{ fontSize: 16, textTransform: 'uppercase', fontWeight: 500 }}>
-              Out Time
-            </Text>
-            <Button title="Pick Out Time" onPress={() => setShowOutTimePicker(true)} />
-            {showOutTimePicker && (
-              <DateTimePicker
-                value={outTime}
-                mode="time"
-                is24Hour={false}
-                display="default"
-                onChange={handleOutTimeChange}
-              />
-            )}
-            <Text style={{ fontSize: 12, color: '#6B7280' }}> {out_time}</Text>
-          </View>
-
-          <Button title='Extend' onPress={handleSessionExtend} />
-        </ScrollView>
+        </View>
       </Modal>
 
-    </>
-  )
+      {/* Add Items Modal */}
+      <Modal
+        visible={isSnacksModalOpen}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Add Extra Items</Text>
+              <TouchableOpacity
+                onPress={() => setisSnacksModalOpen(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>×</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalContent}>
+              <View style={styles.itemSection}>
+                <Text style={styles.modalLabel}>Snacks</Text>
+                <QuantitySelector
+                  initialQuantity={Snacks}
+                  onQuantityChange={(quantity) => setSnacks(quantity)}
+                />
+              </View>
+
+              <View style={styles.itemSection}>
+                <Text style={styles.modalLabel}>Water Bottles</Text>
+                <QuantitySelector
+                  initialQuantity={WaterBottle}
+                  onQuantityChange={(quantity) => setWaterBottle(quantity)}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[styles.actionButton, { marginTop: 20 }]}
+                onPress={handleSessionSnacks}
+              >
+                <Text style={styles.actionButtonText}>Save Changes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 }

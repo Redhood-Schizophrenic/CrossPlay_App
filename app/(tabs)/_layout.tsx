@@ -23,8 +23,17 @@ export default function TabLayout() {
       <NotificationScheduler />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-          headerShown: useClientOnlyValue(false, true),
+          tabBarActiveTintColor: '#05ECE6',
+          tabBarInactiveTintColor: '#8F9BB3',
+          tabBarStyle: {
+            backgroundColor: '#011C37',
+            borderTopWidth: 0,
+            elevation: 0,
+            height: 60,
+            paddingBottom: 8,
+            paddingTop: 8,
+          },
+          headerShown: false,
         }}>
         <Tabs.Screen
           name="index"
@@ -48,10 +57,17 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          }}
+        />
+        <Tabs.Screen
           name="settings"
           options={{
             title: 'Settings',
-            tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
+            tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
           }}
         />
       </Tabs>

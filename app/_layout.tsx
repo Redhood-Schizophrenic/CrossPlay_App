@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
 import { Text, View } from 'react-native';
 import NotificationScheduler from '@/components/Notifications';
+import { NotificationProvider } from '../components/NotificationManager';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,7 +52,16 @@ export default function RootLayout() {
       </ThemeProvider>
     )
   }
-  return <RootLayoutNav />;
+  return (
+    <NotificationProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <NotificationScheduler />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </NotificationProvider>
+  );
 }
 
 function RootLayoutNav() {
